@@ -4,7 +4,7 @@ var now = new Date();
 console.log(start);
 //TO DO: Create rocket, multiplayer?, keydown, rocket hitting asteroids, asteroids class, asteroids stagger
 class Rocket {
-  constructor(x1, y1, x2, y2, x3, y3)
+  constructor([[x1, y1], [x2, y2], [x3, y3]])
   {
     this.x1 = x1;
     this.y1 = y1;
@@ -92,6 +92,7 @@ function checkKeyDown(event)
 
 function drawRocket(rocket)
 {
+  console.log("in drawRocket");
   rocketPos = rocket1.getCoor;
   context.beginPath();
   context.moveTo(rocketPos[0][0], rocketPos[0][1]);
@@ -101,7 +102,27 @@ function drawRocket(rocket)
   context.fill();
   context.strokeStyle = "white";
   context.stroke();
+  checkCollision(circleArrays);
 }
+
+function checkCollision(circleCoors)
+{
+  console.log("in checkCollision");
+  //Generate list of points on circle
+  for (i = 0; i < circleCoors.length; i++)
+  {
+    var circleCoor = circleCoors[i];
+    for (j = 0; j < 51; j++)
+    {
+      var angleR = ((2 * Math.PI) / 50) * j;
+      var coorX = Math.cos(angleR) * 10 + circleCoor[0];
+      var coorY = Math.sin(angleR) * 10 - circleCoor[1];
+
+      console.log(context.isPointInPath(coorX, coorY));
+    }
+  }
+}
+
 function drawAllTEST()
 {
 
@@ -113,18 +134,11 @@ function drawAllTEST()
     console.log("fps:", (frames / msecs) * 1000);
   }
 
-  var leftCircles = circleArrays[0];
-  for (i = 0; i < 5; i++)
-  {
-    console.log(i);
-    currCircle = leftCircles[i];
+  drawCircle(circleArrays);
 
-    drawCircle(currCircle);
-    moveObj(currCircle, [5,0,0]);
+  drawRocket(rocket1);
 
-    leftCircles[i] = currCircle;
-    drawCircle(leftCircles[i]);
-  }
+  window.requestAnimationFrame(drawAllTEST);
 }
 
 function drawAll()
@@ -189,11 +203,13 @@ context.fillRect(0,0,canvas.width, canvas.height);
 var circleChangeLeft = [1, 0, 0];
 var circleChangeRight = [-1, 0, 0];
 
-var circleArrays = createCircle(canvas.height);
+//var circleArrays = createCircle(canvas.height);
+var circleArrays = [canvas.width / 2, canvas.height * 0.75, 10];
 var currCircle = 0;
 
-var rocket1 = new Rocket(canvas.width / 2, canvas.height - 40, canvas.width / 2 - 10, canvas.height - 10, canvas.width / 2 + 10, canvas.height - 10);
+var startRocketCoor = [[canvas.width / 2, canvas.height * 0.75 + 30], [canvas.width / 2 - 10, canvas.height * 0.75 - 5], [canvas.width / 2 + 10, canvas.height * 0.75 - 5]];
+var rocket1 = new Rocket(startRocketCoor);
 
 document.addEventListener("keydown", checkKeyDown);
 // Fire up the animation engine
-window.requestAnimationFrame(drawAll);
+window.requestAnimationFrame(drawAllTEST);
