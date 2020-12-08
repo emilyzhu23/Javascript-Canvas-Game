@@ -2,7 +2,7 @@ var frames = 0;
 var start = new Date();
 var now = new Date();
 console.log(start);
-//TO DO: Create rocket, multiplayer?, keydown, rocket hitting asteroids, asteroids class, asteroids stagger
+//TO DO: Cre ate rocket, multiplayer?, keydown, rocket hitting asteroids, asteroids class, asteroids stagger
 class Rocket {
   constructor([[x1, y1], [x2, y2], [x3, y3]])
   {
@@ -102,12 +102,12 @@ function drawRocket(rocket)
   context.fill();
   context.strokeStyle = "white";
   context.stroke();
+  console.log(context);
   checkCollision(circleArrays);
 }
 
 function checkCollision(circleCoors)
 {
-  console.log("in checkCollision");
   //Generate list of points on circle
   for (i = 0; i < circleCoors.length; i++)
   {
@@ -115,9 +115,13 @@ function checkCollision(circleCoors)
     for (j = 0; j < 51; j++)
     {
       var angleR = ((2 * Math.PI) / 50) * j;
+      console.log(angleR);
       var coorX = Math.cos(angleR) * 10 + circleCoor[0];
+      console.log(coorX);
       var coorY = Math.sin(angleR) * 10 - circleCoor[1];
+      console.log(coorY);
 
+      console.log(context);
       console.log(context.isPointInPath(coorX, coorY));
     }
   }
