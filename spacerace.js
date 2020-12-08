@@ -207,7 +207,7 @@ var circleChangeRight = [-1, 0, 0];
 var circleArrays = [canvas.width / 2, canvas.height * 0.75, 10];
 var currCircle = 0;
 
-var startRocketCoor = [[canvas.width / 2, canvas.height * 0.75 + 30], [canvas.width / 2 - 10, canvas.height * 0.75 - 5], [canvas.width / 2 + 10, canvas.height * 0.75 - 5]];
+var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
 var rocket1 = new Rocket(startRocketCoor);
 
 document.addEventListener("keydown", checkKeyDown);
