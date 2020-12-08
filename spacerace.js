@@ -114,15 +114,16 @@ function checkCollision(circleCoors)
     var circleCoor = circleCoors[i];
     for (j = 0; j < 51; j++)
     {
+      console.log(j);
       var angleR = ((2 * Math.PI) / 50) * j;
       console.log(angleR);
       var coorX = Math.cos(angleR) * 10 + circleCoor[0];
-      console.log(coorX);
+      // console.log(coorX);
       var coorY = Math.sin(angleR) * 10 - circleCoor[1];
-      console.log(coorY);
+      // console.log(coorY);
 
-      console.log(context);
-      console.log(context.isPointInPath(coorX, coorY));
+      // console.log(context);
+      // console.log(context.isPointInPath(coorX, coorY));
     }
   }
 }
