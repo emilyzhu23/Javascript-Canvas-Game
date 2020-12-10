@@ -1,7 +1,7 @@
 var frames = 0;
 var start = new Date();
 var now = new Date();
-console.log(start);
+//console.log(start);
 //TO DO: Cre ate rocket, multiplayer?, keydown, rocket hitting asteroids, asteroids class, asteroids stagger
 class Rocket {
   constructor([[x1, y1], [x2, y2], [x3, y3]])
@@ -29,7 +29,7 @@ function moveObj(currCircle, objChange)
 {
   for (j = 0; j < currCircle.length; j++)
   {
-    console.log(j);
+    //console.log(j);
     currCircle[j] += objChange[j];
   }
 }
@@ -54,7 +54,7 @@ function createCircle(height)
     var circleCoorL = [10, Math.random() * height, 10];
     listOfLeftCircleArrays.push(circleCoorL);
   }
-  console.log(listOfLeftCircleArrays.length);
+  //console.log(listOfLeftCircleArrays.length);
 
   //Right hand circles
   for (i = 0; i < 5; i++)
@@ -69,7 +69,7 @@ function checkKeyDown(event)
 {
   keyCode = event.which;
   keyStr = event.key;
-  console.log(keyStr);
+  //console.log(keyStr);
   rocketPos = rocket1.getCoor;
 
   if (keyStr == 'w' || keyStr == 'W')
@@ -92,40 +92,48 @@ function checkKeyDown(event)
 
 function drawRocket(rocket)
 {
-  console.log("in drawRocket");
+  //console.log("in drawRocket");
   rocketPos = rocket1.getCoor;
   context.beginPath();
   context.moveTo(rocketPos[0][0], rocketPos[0][1]);
   context.lineTo(rocketPos[1][0], rocketPos[1][1]);
   context.lineTo(rocketPos[2][0], rocketPos[2][1]);
+  checkCollision(circleArrays);
   context.fillStyle = "white";
   context.fill();
   context.strokeStyle = "white";
   context.stroke();
-  console.log(context);
-  checkCollision(circleArrays);
+  //console.log(context);
 }
 
 function checkCollision(circleCoors)
 {
   //Generate list of points on circle
-  for (i = 0; i < circleCoors.length; i++)
+  var avgX = 0;
+  var avgY = 0;
+  for (j = 0; j < 50; j++)
   {
-    var circleCoor = circleCoors[i];
-    for (j = 0; j < 51; j++)
-    {
-      console.log(j);
-      var angleR = ((2 * Math.PI) / 50) * j;
-      console.log(angleR);
-      var coorX = Math.cos(angleR) * 10 + circleCoor[0];
-      // console.log(coorX);
-      var coorY = Math.sin(angleR) * 10 - circleCoor[1];
-      // console.log(coorY);
+    var angleR = ((2 * Math.PI) / 50) * j;
+    //console.log(angleR);
+    //console.log(Math.cos(angleR));
+    var coorX = Math.round(Math.cos(angleR) * 10 + circleCoors[0]);
+    avgX += coorX;
+    //console.log(coorX);
+    var coorY = Math.round(Math.sin(angleR) * 10 + circleCoors[1]);
+    avgY += coorY;
+    //console.log(coorY);
 
-      // console.log(context);
-      // console.log(context.isPointInPath(coorX, coorY));
+    if (context.isPointInPath(coorX, coorY))
+    {
+      rocket1.setCoor = startRocketCoor;
     }
   }
+
+  //avgX = Math.floor(avgX/50);
+  //avgY = Math.floor(avgY/50);
+
+  //console.log(avgX);
+  //console.log(avgY);
 }
 
 function drawAllTEST()
@@ -135,10 +143,14 @@ function drawAllTEST()
   if (frames % 200 == 0) {
     now = new Date();
     msecs = now.getTime() - start.getTime();
-    console.log(now.getTime());
-    console.log("fps:", (frames / msecs) * 1000);
+    //console.log(now.getTime());
+    //console.log("fps:", (frames / msecs) * 1000);
   }
 
+  context.clearRect(0,0,canvas.width, canvas.height);
+  context.fillStyle = "black";
+  context.fillRect(0,0,canvas.width, canvas.height);
+  
   drawCircle(circleArrays);
 
   drawRocket(rocket1);
@@ -152,8 +164,8 @@ function drawAll()
   if (frames % 200 == 0) {
     now = new Date();
     msecs = now.getTime() - start.getTime();
-    console.log(now.getTime());
-    console.log("fps:", (frames / msecs) * 1000);
+    //console.log(now.getTime());
+    //console.log("fps:", (frames / msecs) * 1000);
   }
 
 
@@ -164,7 +176,7 @@ function drawAll()
   context.fillStyle = "black";
   context.fillRect(0,0,canvas.width, canvas.height);
 
-  console.log(leftCircles.length);
+  //console.log(leftCircles.length);
   for (i = 0; i < leftCircles.length; i++)
   {
     var currCircle = leftCircles[i];
@@ -210,6 +222,8 @@ var circleChangeRight = [-1, 0, 0];
 
 //var circleArrays = createCircle(canvas.height);
 var circleArrays = [canvas.width / 2, canvas.height * 0.75, 10];
+console.log(circleArrays[0]);
+console.log(circleArrays[1]);
 var currCircle = 0;
 
 var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
