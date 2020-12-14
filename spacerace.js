@@ -1,8 +1,7 @@
 var frames = 0;
 var start = new Date();
 var now = new Date();
-//console.log(start);
-//TO DO: Cre ate rocket, multiplayer?, keydown, rocket hitting asteroids, asteroids class, asteroids stagger
+
 class Rocket {
   constructor([[x1, y1], [x2, y2], [x3, y3]])
   {
@@ -25,19 +24,42 @@ class Rocket {
     this.y3 = coors[2][1];
   }
 }
+
+class Asteroid
+{
+  constructor([centerX, centerY, radius])
+  {
+    this.centerX = centerX;
+    this.centerY = centerY;
+    this.radius = radius;
+  }
+  get getCoor()
+  {
+    return [this.centerX, this.centerY, this.radius];
+  }
+  set setCoor(coors)
+  {
+    this.centerX = coors[0];
+    this.centerY = coors[1];
+    this.radius = coors[2];
+  }
+}
 function moveObj(currCircle, objChange)
 {
-  for (j = 0; j < currCircle.length; j++)
+  var currCircleCoor = currCircle.getCoor;
+  for (j = 0; j < currCircleCoor.length; j++)
   {
     //console.log(j);
-    currCircle[j] += objChange[j];
+    currCircleCoor[j] += objChange[j];
   }
+  currCircle.setCoor = currCircleCoor;
 }
 
 function drawCircle(circle)
 {
+  var coor = circle.getCoor;
   context.beginPath();
-  context.arc(circle[0], circle[1], circle[2], 0, 2 * Math.PI);
+  context.arc(coor[0], coor[1], coor[2], 0, 2 * Math.PI);
   context.fillStyle = "white";
   context.fill();
   context.strokeStyle = "white";
@@ -49,21 +71,22 @@ function createCircle(height)
   var listOfLeftCircleArrays = [];
   var listOfRightCircleArrays = [];
 
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < 3; i++)
   {
     var circleCoorL = [10, Math.random() * height, 10];
-    listOfLeftCircleArrays.push(circleCoorL);
+    var circle = new Asteroid(circleCoorL);
+    listOfLeftCircleArrays.push(circle);
   }
-  //console.log(listOfLeftCircleArrays.length);
 
   //Right hand circles
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < 3; i++)
   {
     var circleCoorR = [canvas.width - 10, Math.random() * height, 10];
-    listOfRightCircleArrays.push(circleCoorR);
+    var circle = new Asteroid(circleCoorR);
+    listOfRightCircleArrays.push(circle);
   }
 
-  return [listOfLeftCircleArrays, listOfRightCircleArrays];
+  return listOfLeftCircleArrays.concat(listOfRightCircleArrays);
 }
 function checkKeyDown(event)
 {
@@ -103,7 +126,6 @@ function drawRocket(rocket)
   context.fill();
   context.strokeStyle = "white";
   context.stroke();
-  //console.log(context);
 }
 
 function checkCollision(circleCoors)
@@ -111,29 +133,23 @@ function checkCollision(circleCoors)
   //Generate list of points on circle
   var avgX = 0;
   var avgY = 0;
-  for (j = 0; j < 50; j++)
+  for (i = 0; i < circleCoors.length; i++)
   {
-    var angleR = ((2 * Math.PI) / 50) * j;
-    //console.log(angleR);
-    //console.log(Math.cos(angleR));
-    var coorX = Math.round(Math.cos(angleR) * 10 + circleCoors[0]);
-    avgX += coorX;
-    //console.log(coorX);
-    var coorY = Math.round(Math.sin(angleR) * 10 + circleCoors[1]);
-    avgY += coorY;
-    //console.log(coorY);
-
-    if (context.isPointInPath(coorX, coorY))
+    var currCircle = circleCoors[i].getCoor;
+    //console.log(currCircle);
+    for (j = 0; j < 50; j++)
     {
-      rocket1.setCoor = startRocketCoor;
+      var angleR = ((2 * Math.PI) / 50) * j;
+      var coorX = Math.round(Math.cos(angleR) * 10 + currCircle[0]);
+      var coorY = Math.round(Math.sin(angleR) * 10 + currCircle[1]);
+
+      if (context.isPointInPath(coorX, coorY))
+      {
+        rocket1.setCoor = startRocketCoor;
+        console.log("True");
+      }
     }
   }
-
-  //avgX = Math.floor(avgX/50);
-  //avgY = Math.floor(avgY/50);
-
-  //console.log(avgX);
-  //console.log(avgY);
 }
 
 function drawAllTEST()
@@ -150,7 +166,7 @@ function drawAllTEST()
   context.clearRect(0,0,canvas.width, canvas.height);
   context.fillStyle = "black";
   context.fillRect(0,0,canvas.width, canvas.height);
-  
+
   drawCircle(circleArrays);
 
   drawRocket(rocket1);
@@ -164,33 +180,43 @@ function drawAll()
   if (frames % 200 == 0) {
     now = new Date();
     msecs = now.getTime() - start.getTime();
-    //console.log(now.getTime());
+    console.log(now.getTime());
     //console.log("fps:", (frames / msecs) * 1000);
   }
-
-
-  var leftCircles = circleArrays[0];
-  var rightCircles = circleArrays[1];
-
   context.clearRect(0,0,canvas.width, canvas.height);
   context.fillStyle = "black";
   context.fillRect(0,0,canvas.width, canvas.height);
 
-  //console.log(leftCircles.length);
-  for (i = 0; i < leftCircles.length; i++)
+  if (frames % 60 == 0)
   {
-    var currCircle = leftCircles[i];
+    var left = [];
+    var right = [];
+    left, right = createCircle(canvas.height);
+    for (i = 0; i < left.length; i++)
+    {
+      circleArrays.unshift(left[i]);
+    }
+    for (i = 0; i < left.length; i++)
+    {
+      circleArrays.push(right[i]);
+    }
+  }
+  var halfArrayLength = circleArrays.length / 2;
+  //Left
+  for (i = 0; i < halfArrayLength; i++)
+  {
+    var currCircle = circleArrays[i];
     drawCircle(currCircle);
     moveObj(currCircle, circleChangeLeft);
-    leftCircles[i] = currCircle;
+    circleArrays[i] = currCircle;
   }
-
-  for (i=0; i < rightCircles.length; i++)
+  //Right
+  for (i = halfArrayLength; i < circleArrays.length; i++)
   {
-    var currCircle = rightCircles[i];
+    var currCircle = circleArrays[i];
     drawCircle(currCircle);
     moveObj(currCircle, circleChangeRight);
-    rightCircles[i] = currCircle;
+    circleArrays[i] = currCircle;
   }
 
   drawRocket(rocket1);
@@ -220,10 +246,10 @@ context.fillRect(0,0,canvas.width, canvas.height);
 var circleChangeLeft = [1, 0, 0];
 var circleChangeRight = [-1, 0, 0];
 
-//var circleArrays = createCircle(canvas.height);
-var circleArrays = [canvas.width / 2, canvas.height * 0.75, 10];
-console.log(circleArrays[0]);
-console.log(circleArrays[1]);
+var circleArrays = createCircle(canvas.height);
+//console.log(circleArraysL);
+//console.log(circleArraysR);
+//var circleArrays = circleArraysL.concat(circleArraysR);
 var currCircle = 0;
 
 var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
@@ -231,4 +257,4 @@ var rocket1 = new Rocket(startRocketCoor);
 
 document.addEventListener("keydown", checkKeyDown);
 // Fire up the animation engine
-window.requestAnimationFrame(drawAllTEST);
+window.requestAnimationFrame(drawAll);
