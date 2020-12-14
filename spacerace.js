@@ -187,21 +187,35 @@ function drawAll()
   context.fillStyle = "black";
   context.fillRect(0,0,canvas.width, canvas.height);
 
-  if (frames % 60 == 0)
+  //New Asteroids
+  if (frames % 200 == 0)
   {
-    var left = [];
-    var right = [];
-    left, right = createCircle(canvas.height);
-    for (i = 0; i < left.length; i++)
+    var circleLR = [];
+    circleLR = createCircle(canvas.height);
+    for (i = 0; i < 3; i++)
     {
-      circleArrays.unshift(left[i]);
+      console.log("L");
+      circleArrays.unshift(circleLR[i]);
     }
-    for (i = 0; i < left.length; i++)
+    for (i = 3; i < 6; i++)
     {
-      circleArrays.push(right[i]);
+      console.log("R");
+      circleArrays.push(circleLR[i]);
     }
   }
+
+  //Take out asteroids that are offscreen
+  for (var asteroid of circleArrays)
+  {
+    asteroidCoor = asteroid.getCoor;
+    if (asteroidCoor[0] < -10 || asteroidCoor[0] > (canvas.width + 10))
+    {
+      //splice
+    }
+  }
+  console.log(circleArrays.length);
   var halfArrayLength = circleArrays.length / 2;
+
   //Left
   for (i = 0; i < halfArrayLength; i++)
   {
