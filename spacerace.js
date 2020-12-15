@@ -1,4 +1,5 @@
 var frames = 0;
+var counter = 0;
 var start = new Date();
 var now = new Date();
 
@@ -49,7 +50,6 @@ function moveObj(currCircle, objChange)
   var currCircleCoor = currCircle.getCoor;
   for (j = 0; j < currCircleCoor.length; j++)
   {
-    //console.log(j);
     currCircleCoor[j] += objChange[j];
   }
   currCircle.setCoor = currCircleCoor;
@@ -92,7 +92,6 @@ function checkKeyDown(event)
 {
   keyCode = event.which;
   keyStr = event.key;
-  //console.log(keyStr);
   rocketPos = rocket1.getCoor;
 
   if (keyStr == 'w' || keyStr == 'W')
@@ -115,7 +114,6 @@ function checkKeyDown(event)
 
 function drawRocket(rocket)
 {
-  //console.log("in drawRocket");
   rocketPos = rocket1.getCoor;
   context.beginPath();
   context.moveTo(rocketPos[0][0], rocketPos[0][1]);
@@ -136,7 +134,6 @@ function checkCollision(circleCoors)
   for (i = 0; i < circleCoors.length; i++)
   {
     var currCircle = circleCoors[i].getCoor;
-    //console.log(currCircle);
     for (j = 0; j < 50; j++)
     {
       var angleR = ((2 * Math.PI) / 50) * j;
@@ -146,7 +143,6 @@ function checkCollision(circleCoors)
       if (context.isPointInPath(coorX, coorY))
       {
         rocket1.setCoor = startRocketCoor;
-        console.log("True");
       }
     }
   }
@@ -159,8 +155,8 @@ function drawAllTEST()
   if (frames % 200 == 0) {
     now = new Date();
     msecs = now.getTime() - start.getTime();
-    //console.log(now.getTime());
-    //console.log("fps:", (frames / msecs) * 1000);
+    console.log(now.getTime());
+    console.log("fps:", (frames / msecs) * 1000);
   }
 
   context.clearRect(0,0,canvas.width, canvas.height);
@@ -176,11 +172,12 @@ function drawAllTEST()
 
 function drawAll()
 {
+  counter += 1
   frames += 1;
   if (frames % 200 == 0) {
     now = new Date();
     msecs = now.getTime() - start.getTime();
-    console.log(now.getTime());
+    //console.log(now.getTime());
     //console.log("fps:", (frames / msecs) * 1000);
   }
   context.clearRect(0,0,canvas.width, canvas.height);
@@ -189,18 +186,16 @@ function drawAll()
 
   //New Asteroids
 
-  if (frames % 200 == 0)
+  if ((counter % 100 == 0) && (counter < 201))
   {
     var circleLR = [];
     circleLR = createCircle(canvas.height);
     for (i = 0; i < 3; i++)
     {
-      console.log("L");
       circleArrays.unshift(circleLR[i]);
     }
     for (i = 3; i < 6; i++)
     {
-      console.log("R");
       circleArrays.push(circleLR[i]);
     }
   }
@@ -212,7 +207,7 @@ function drawAll()
     var asteroidCoor = circleArrays[i].getCoor;
     if (asteroidCoor[0] < -10 || asteroidCoor[0] > (canvas.width + 10))
     {
-      if (i < (circleArrays / 2))
+      if (i < (circleArrays.length / 2))
       {
         circleArrays[i].setCoor = [10, asteroidCoor[1], asteroidCoor[2]];
       }
@@ -271,9 +266,6 @@ var circleChangeLeft = [1, 0, 0];
 var circleChangeRight = [-1, 0, 0];
 
 var circleArrays = createCircle(canvas.height);
-//console.log(circleArraysL);
-//console.log(circleArraysR);
-//var circleArrays = circleArraysL.concat(circleArraysR);
 var currCircle = 0;
 
 var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
