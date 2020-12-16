@@ -170,6 +170,37 @@ function drawAllTEST()
   window.requestAnimationFrame(drawAllTEST);
 }
 
+function fixOffScreenAsteroids(circleArrays)
+{
+  for (var i = 0; i < circleArrays.length; i++)
+  {
+    var asteroidCoor = circleArrays[i].getCoor;
+    if (asteroidCoor[0] < -10 || asteroidCoor[0] > (canvas.width + 10))
+    {
+      if (i < (circleArrays.length / 2))
+      {
+        circleArrays[i].setCoor = [10, asteroidCoor[1], asteroidCoor[2]];
+      }
+      else
+      {
+        circleArrays[i].setCoor = [canvas.width - 10, asteroidCoor[1], asteroidCoor[2]];
+      }
+    }
+  }
+}
+
+function countPoints()
+{
+  if (rocketObj.y1 < rocketObj.y3 && rocketObj.y1 < rocketObj.y2)
+  {
+    if (rocketObj.y1 <= 0)
+    {
+      points++;
+      ctx.font = "30px Arial";
+      ctx.fillText(points, 10, 50);
+    }
+  }
+}
 function drawAll()
 {
   counter += 1
@@ -186,7 +217,7 @@ function drawAll()
 
   //New Asteroids
 
-  if ((counter % 100 == 0) && (counter < 201))
+  if ((counter % 200 == 0) && (counter < 401))
   {
     var circleLR = [];
     circleLR = createCircle(canvas.height);
@@ -199,26 +230,9 @@ function drawAll()
       circleArrays.push(circleLR[i]);
     }
   }
+  //Move Asteroid that are offscreen to other side of screen
+  fixOffScreenAsteroids(circleArrays);
 
-  console.log(circleArrays.length);
-  //Take out asteroids that are offscreen
-  for (var i = 0; i < circleArrays.length; i++)
-  {
-    var asteroidCoor = circleArrays[i].getCoor;
-    if (asteroidCoor[0] < -10 || asteroidCoor[0] > (canvas.width + 10))
-    {
-      if (i < (circleArrays.length / 2))
-      {
-        circleArrays[i].setCoor = [10, asteroidCoor[1], asteroidCoor[2]];
-      }
-      else
-      {
-        circleArrays[i].setCoor = [canvas.width - 10, asteroidCoor[1], asteroidCoor[2]];
-      }
-    }
-  }
-
-  console.log(circleArrays.length);
   var halfArrayLength = circleArrays.length / 2;
 
   //Left
@@ -271,6 +285,7 @@ var currCircle = 0;
 var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
 var rocket1 = new Rocket(startRocketCoor);
 
+var points = 0;
 document.addEventListener("keydown", checkKeyDown);
 // Fire up the animation engine
 window.requestAnimationFrame(drawAll);
