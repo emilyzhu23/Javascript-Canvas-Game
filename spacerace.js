@@ -109,16 +109,20 @@ function checkKeyDown(event)
       rocketPos[i][1] += 15;
     }
   }
+
+  else if (keyStr == 'q' || keyStr == "Q")
+  {
+    playing = false;
+  }
   rocket1.setCoor = rocketPos;
 }
 
 function drawRocket(rocket)
 {
-  rocketPos = rocket1.getCoor;
   context.beginPath();
-  context.moveTo(rocketPos[0][0], rocketPos[0][1]);
-  context.lineTo(rocketPos[1][0], rocketPos[1][1]);
-  context.lineTo(rocketPos[2][0], rocketPos[2][1]);
+  context.moveTo(rocket.x1, rocket.y1);
+  context.lineTo(rocket.x2, rocket.y2);
+  context.lineTo(rocket.x3, rocket.y3);
   checkCollision(circleArrays);
   context.fillStyle = "white";
   context.fill();
@@ -133,12 +137,12 @@ function checkCollision(circleCoors)
   var avgY = 0;
   for (i = 0; i < circleCoors.length; i++)
   {
-    var currCircle = circleCoors[i].getCoor;
+    var currCircle = circleCoors[i];
     for (j = 0; j < 50; j++)
     {
       var angleR = ((2 * Math.PI) / 50) * j;
-      var coorX = Math.round(Math.cos(angleR) * 10 + currCircle[0]);
-      var coorY = Math.round(Math.sin(angleR) * 10 + currCircle[1]);
+      var coorX = Math.round(Math.cos(angleR) * 10 + currCircle.centerX);
+      var coorY = Math.round(Math.sin(angleR) * 10 + currCircle.centerY);
 
       if (context.isPointInPath(coorX, coorY))
       {
@@ -174,86 +178,108 @@ function fixOffScreenAsteroids(circleArrays)
 {
   for (var i = 0; i < circleArrays.length; i++)
   {
-    var asteroidCoor = circleArrays[i].getCoor;
-    if (asteroidCoor[0] < -10 || asteroidCoor[0] > (canvas.width + 10))
+    var asteroid = circleArrays[i];
+    if (asteroid.centerX < -10 || asteroid.centerX > (canvas.width + 10))
     {
       if (i < (circleArrays.length / 2))
       {
-        circleArrays[i].setCoor = [10, asteroidCoor[1], asteroidCoor[2]];
+        circleArrays[i].setCoor = [10, asteroid.centerY, asteroid.radius];
       }
       else
       {
-        circleArrays[i].setCoor = [canvas.width - 10, asteroidCoor[1], asteroidCoor[2]];
+        circleArrays[i].setCoor = [canvas.width - 10, asteroid.centerY, asteroid.radius];
       }
     }
   }
 }
 
-function countPoints()
+function drawPoints()
 {
-  if (rocketObj.y1 < rocketObj.y3 && rocketObj.y1 < rocketObj.y2)
-  {
-    if (rocketObj.y1 <= 0)
-    {
-      points++;
-      ctx.font = "30px Arial";
-      ctx.fillText(points, 10, 50);
-    }
-  }
+  context.font = "50px Arial";
+  context.fillStyle = "white";
+  context.textAlign = "center";
+  context.fillText(points, canvas.width / 2, canvas.height * 0.9);
 }
 function drawAll()
 {
-  counter += 1
-  frames += 1;
-  if (frames % 200 == 0) {
-    now = new Date();
-    msecs = now.getTime() - start.getTime();
-    //console.log(now.getTime());
-    //console.log("fps:", (frames / msecs) * 1000);
-  }
-  context.clearRect(0,0,canvas.width, canvas.height);
-  context.fillStyle = "black";
-  context.fillRect(0,0,canvas.width, canvas.height);
-
-  //New Asteroids
-
-  if ((counter % 200 == 0) && (counter < 401))
-  {
-    var circleLR = [];
-    circleLR = createCircle(canvas.height);
-    for (i = 0; i < 3; i++)
-    {
-      circleArrays.unshift(circleLR[i]);
+  if (playing) {
+    counter += 1
+    frames += 1;
+    if (frames % 200 == 0) {
+      now = new Date();
+      msecs = now.getTime() - start.getTime();
+      //console.log(now.getTime());
+      //console.log("fps:", (frames / msecs) * 1000);
     }
-    for (i = 3; i < 6; i++)
+    context.clearRect(0,0,canvas.width, canvas.height);
+    context.fillStyle = "black";
+    context.fillRect(0,0,canvas.width, canvas.height);
+
+    //New Asteroids
+
+    if ((counter % 200 == 0) && (counter < 401))
     {
-      circleArrays.push(circleLR[i]);
+      var circleLR = [];
+      circleLR = createCircle(canvas.height);
+      for (i = 0; i < 3; i++)
+      {
+        circleArrays.unshift(circleLR[i]);
+      }
+      for (i = 3; i < 6; i++)
+      {
+        circleArrays.push(circleLR[i]);
+      }
+    }
+    //Move Asteroid that are offscreen to other side of screen
+    fixOffScreenAsteroids(circleArrays);
+
+    var halfArrayLength = circleArrays.length / 2;
+
+    //Left
+    for (i = 0; i < halfArrayLength; i++)
+    {
+      var currCircle = circleArrays[i];
+      drawCircle(currCircle);
+      moveObj(currCircle, circleChangeLeft);
+      circleArrays[i] = currCircle;
+    }
+    //Right
+    for (i = halfArrayLength; i < circleArrays.length; i++)
+    {
+      var currCircle = circleArrays[i];
+      drawCircle(currCircle);
+      moveObj(currCircle, circleChangeRight);
+      circleArrays[i] = currCircle;
+    }
+
+    drawRocket(rocket1);
+
+    if (rocket1.y1 > rocket1.y3 || rocket1.y1 > rocket1.y2)
+    {
+      throw("Not true");
+    }
+
+    if (rocket1.y1 <= 0)
+    {
+      points++;
+      playing = false;
+      frames = 0;
     }
   }
-  //Move Asteroid that are offscreen to other side of screen
-  fixOffScreenAsteroids(circleArrays);
-
-  var halfArrayLength = circleArrays.length / 2;
-
-  //Left
-  for (i = 0; i < halfArrayLength; i++)
+  //False
+  else
   {
-    var currCircle = circleArrays[i];
-    drawCircle(currCircle);
-    moveObj(currCircle, circleChangeLeft);
-    circleArrays[i] = currCircle;
-  }
-  //Right
-  for (i = halfArrayLength; i < circleArrays.length; i++)
-  {
-    var currCircle = circleArrays[i];
-    drawCircle(currCircle);
-    moveObj(currCircle, circleChangeRight);
-    circleArrays[i] = currCircle;
-  }
+    frames += 1;
+    console.log(frames);
+    drawPoints()
 
-  drawRocket(rocket1);
-
+    if (frames == 150)
+    {
+      playing = true;
+      rocket1.setCoor = startRocketCoor;
+      drawRocket(rocket1);
+    }
+  }
   window.requestAnimationFrame(drawAll);
 }
 
@@ -286,6 +312,8 @@ var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.widt
 var rocket1 = new Rocket(startRocketCoor);
 
 var points = 0;
+var playing = true;
+
 document.addEventListener("keydown", checkKeyDown);
 // Fire up the animation engine
 window.requestAnimationFrame(drawAll);
