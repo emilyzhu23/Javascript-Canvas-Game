@@ -1,14 +1,16 @@
-//Emily Zhu
-//Honors Computer Science P7
-//This program replicates the game, Spacerace. Spacerace is a game in which the
-//player moves a rocket up and down and tries to avoid the asteroids moving across the screen.
+// Emily Zhu
+// Honors Computer Science P7
+// Date: 12.18.20
+// This program replicates the game, Spacerace. Spacerace is a game in which the
+// player moves a rocket up and down and tries to avoid the asteroids moving across the screen.
 
 var frames = 0;
 var counter = 0;
 var start = new Date();
 var now = new Date();
 
-class Rocket {
+class Rocket
+{
   constructor([[x1, y1], [x2, y2], [x3, y3]])
   {
     this.x1 = x1;
@@ -18,10 +20,12 @@ class Rocket {
     this.x3 = x3;
     this.y3 = y3;
   }
-  get getCoor(){
+  get getCoor()
+  {
     return [[this.x1,this.y1], [this.x2,this.y2], [this.x3,this.y3]];
   }
-  set setCoor(coors){
+  set setCoor(coors)
+  {
     this.x1 = coors[0][0];
     this.y1 = coors[0][1];
     this.x2 = coors[1][0];
@@ -51,15 +55,20 @@ class Asteroid
   }
 }
 
-//Move the asteroid across the screen
 function moveObj(currCircle, objChange)
 {
+  // Purpose: This function moves an asteroid's coordinates horizontally
+  // Parameters: currCircle, Asteroid object: the Asteroid that's being moved;
+  // objChange, array with 3 integers: the amount that each aspect of the Asteroid should be changed
+  // Return Val: None
   currCircle.centerX += objChange[0];
 }
 
-//Draw the asteroids
 function drawCircle(circle)
 {
+  // Purpose: This function draws one asteroid
+  // Parameters: circle, Asteroid object: the Asteroid that's being drawn
+  // Return Val: None
   var coor = circle.getCoor;
   context.beginPath();
   context.arc(coor[0], coor[1], coor[2], 0, 2 * Math.PI);
@@ -69,9 +78,12 @@ function drawCircle(circle)
   context.stroke();
 }
 
-//Make the 10 circle objects for each wave of asteroids
 function createCircle(height)
 {
+  // Purpose: This function creates 8 Asteroid objects, 5 on each side of the canvas
+  // Parameters: height, integer: the height of the canvas
+  // Return Val: listOfLeftCircleArrays.concat(listOfRightCircleArrays), list: all of the
+  // Asteroid objects made
   var listOfLeftCircleArrays = [];
   var listOfRightCircleArrays = [];
 
@@ -94,12 +106,15 @@ function createCircle(height)
   return listOfLeftCircleArrays.concat(listOfRightCircleArrays);
 }
 
-//To check what keys have been pressed to move the rocket forward and back
 function checkKeyDown(event)
 {
+  // Purpose: This function checks what key the user has pressed and changes variables accordingly
+  // Parameters: event, keyboard event Object: the key that the user pressed
+  // Return Val: None
   keyCode = event.which;
   keyStr = event.key;
 
+  // Moves the rocket forward
   if (keyStr == 'w' || keyStr == 'W')
   {
     console.log("WW");
@@ -108,17 +123,32 @@ function checkKeyDown(event)
     rocket1.y3 -= 15;
   }
 
+  // Moves the rocket backward
   else if (keyStr == 's' || keyStr == 'S')
   {
     rocket1.y1 += 15;
     rocket1.y2 += 15;
     rocket1.y3 += 15;
   }
+
+  // Start play
+  else if (keyStr == 'p' || keyStr == 'P')
+  {
+    playingState = "playing";
+  }
+
+  // Pause play
+  else if (keyStr == 'q' || keyStr == "Q")
+  {
+    playingState = "quit";
+  }
 }
 
-//Draw the rocket (which is in the same of a triangle)
 function drawRocket(rocket)
 {
+  // Purpose: This function draws the rocket, a triangle
+  // Parameters: rocket, Rocket Object: the rocket on the screen that user is controlling
+  // Return Val: None
   context.beginPath();
   context.moveTo(rocket.x1, rocket.y1);
   context.lineTo(rocket.x2, rocket.y2);
@@ -130,9 +160,12 @@ function drawRocket(rocket)
   context.stroke();
 }
 
-//To check if any points on all of the asteroids intersects any of the 3 lines on the rocket (triangle)
 function checkCollision(circleCoors)
 {
+  // Purpose: This function checks to see if the rocket intersects with any of the asteroids
+  // Parameters: circleCoors, list of Asteroid objects: all of the asteroids on screen
+  // Return Val: None.
+
   //Generate list of points on circle
   for (i = 0; i < circleCoors.length; i++)
   {
@@ -151,9 +184,12 @@ function checkCollision(circleCoors)
   }
 }
 
-//Reuse the asteroid objects that have moved offscreen and restart them at the edges of the screen
 function fixOffScreenAsteroids(circleArrays)
 {
+  // Purpose: This function checks if any of the asteroids are offscreen and moves them
+  // to the edge of the screen to be reused if they are.
+  // Parameters: circleArrays, list of Asteroid objects: all of the asteroids
+  // Return Val: None
   for (var i = 0; i < circleArrays.length; i++)
   {
     var asteroid = circleArrays[i];
@@ -172,23 +208,32 @@ function fixOffScreenAsteroids(circleArrays)
 }
 
 //Draw the number of points that the user has
-function drawPoints()
+function drawScore()
 {
+  // Purpose: This function outputs the user's score
+  // Parameters: None
+  // Return Val: None
   context.font = "30px Arial";
   context.fillStyle = "white";
   context.textAlign = "center";
-  context.fillText("+1", canvas.width / 2, canvas.height * 0.8);
+  context.fillText("+1", canvas.width / 2, canvas.height * 0.7);
   context.font = "50px Arial";
-  context.fillText("Points: "+ points, canvas.width / 2, canvas.height * 0.9);
+  context.fillText("Points: "+ points, canvas.width / 2, canvas.height * 0.8);
+  context.fillText("Press 'p' to keep playing", canvas.width / 2, canvas.height * 0.9);
 }
 
-
-function drawAll()
+function playGame()
 {
-  if (playing) {
+  // Purpose: This function is the main function to play the game and utilizes all
+  // the other functions.
+  // Parameters: None
+  // Return Val: None
+  if (playingState == "playing")
+  {
     counter += 1
     frames += 1;
-    if (frames % 200 == 0) {
+    if (frames % 200 == 0)
+    {
       now = new Date();
       msecs = now.getTime() - start.getTime();
       //console.log(now.getTime());
@@ -244,27 +289,34 @@ function drawAll()
     {
       points++;
       console.log(points);
-      playing = false;
+      playingState = "win";
       frames = 0;
     }
   }
 
-  //Once they win, draw the score and show for 150 frames
-  else
+  // Once they win, draw the score
+  else if (playingState == "win")
   {
     frames += 1;
-    console.log(frames);
-    console.log("drawPoints");
-    drawPoints()
-
-    if (frames == 150)
-    {
-      playing = true;
-      rocket1.setCoor = startRocketCoor;
-      drawRocket(rocket1);
-    }
+    drawScore()
+    rocket1.setCoor = startRocketCoor;
   }
-  window.requestAnimationFrame(drawAll);
+
+  // Draw instructions
+  else if (playingState == "start")
+  {
+    frames += 1;
+    context.font = "50px Helvetica";
+    context.fillStyle = "white";
+    context.textAlign = "center";
+    context.fillText("How to Play Spacerace", canvas.width / 2, canvas.height * 0.1);
+    context.font = "30px Helvetica";
+    context.fillText("Press 'w' to move forward and press 's' to move backward", canvas.width / 2, canvas.height * 0.75);
+    context.fillText("Press 'p' to start playing at anytime and press 'q' to quit/pause the game", canvas.width / 2, canvas.height * 0.9);
+    context.font = "20px Helvetica";
+    context.fillText("The objective of the game is to move the rocket back and forth, avoiding the asteroids moving across screen, to reach the other end", canvas.width / 2, canvas.height * 0.5);
+  }
+  window.requestAnimationFrame(playGame);
 }
 
 
@@ -286,21 +338,21 @@ context = canvas.getContext("2d");
 context.fillStyle = "black";
 context.fillRect(0,0,canvas.width, canvas.height);
 
-//How much to move asteroids
+// How much to move asteroids
 var circleChangeLeft = [2, 0, 0];
 var circleChangeRight = [-2, 0, 0];
 
-//Create first few circles on screen
+// Create first few circles on screen
 var circleArrays = createCircle(canvas.height);
 var currCircle = 0;
 
-//The beginning coordinates for the rocket
+// The beginning coordinates for the rocket
 var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
 var rocket1 = new Rocket(startRocketCoor);
 
 var points = 0;
-var playing = true;
+var playingState = "start";
 
 document.addEventListener("keydown", checkKeyDown);
 // Fire up the animation engine
-window.requestAnimationFrame(drawAll);
+window.requestAnimationFrame(playGame);
