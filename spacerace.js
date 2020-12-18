@@ -71,17 +71,17 @@ function createCircle(height)
   var listOfLeftCircleArrays = [];
   var listOfRightCircleArrays = [];
 
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 5; i++)
   {
-    var circleCoorL = [10, Math.random() * height, 10];
+    var circleCoorL = [10, Math.random() * height, 5];
     var circle = new Asteroid(circleCoorL);
     listOfLeftCircleArrays.push(circle);
   }
 
   //Right hand circles
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 5; i++)
   {
-    var circleCoorR = [canvas.width - 10, Math.random() * height, 10];
+    var circleCoorR = [canvas.width - 10, Math.random() * height, 5];
     var circle = new Asteroid(circleCoorR);
     listOfRightCircleArrays.push(circle);
   }
@@ -152,28 +152,6 @@ function checkCollision(circleCoors)
   }
 }
 
-function drawAllTEST()
-{
-
-  frames += 1;
-  if (frames % 200 == 0) {
-    now = new Date();
-    msecs = now.getTime() - start.getTime();
-    console.log(now.getTime());
-    console.log("fps:", (frames / msecs) * 1000);
-  }
-
-  context.clearRect(0,0,canvas.width, canvas.height);
-  context.fillStyle = "black";
-  context.fillRect(0,0,canvas.width, canvas.height);
-
-  drawCircle(circleArrays);
-
-  drawRocket(rocket1);
-
-  window.requestAnimationFrame(drawAllTEST);
-}
-
 function fixOffScreenAsteroids(circleArrays)
 {
   for (var i = 0; i < circleArrays.length; i++)
@@ -217,7 +195,7 @@ function drawAll()
 
     //New Asteroids
 
-    if ((counter % 200 == 0) && (counter < 401))
+    if ((counter % 50 == 0) && (counter < 601))
     {
       var circleLR = [];
       circleLR = createCircle(canvas.height);
@@ -266,7 +244,7 @@ function drawAll()
       frames = 0;
     }
   }
-  //False
+
   else
   {
     frames += 1;
@@ -302,8 +280,8 @@ context = canvas.getContext("2d");
 context.fillStyle = "black";
 context.fillRect(0,0,canvas.width, canvas.height);
 
-var circleChangeLeft = [1, 0, 0];
-var circleChangeRight = [-1, 0, 0];
+var circleChangeLeft = [5, 0, 0];
+var circleChangeRight = [-5, 0, 0];
 
 var circleArrays = createCircle(canvas.height);
 var currCircle = 0;
