@@ -1,3 +1,8 @@
+//Emily Zhu
+//Honors Computer Science P7
+//This program replicates the game, Spacerace. Spacerace is a game in which the
+//player moves a rocket up and down and tries to avoid the asteroids moving across the screen.
+
 var frames = 0;
 var counter = 0;
 var start = new Date();
@@ -45,16 +50,14 @@ class Asteroid
     this.radius = coors[2];
   }
 }
+
+//Move the asteroid across the screen
 function moveObj(currCircle, objChange)
 {
-  var currCircleCoor = currCircle.getCoor;
-  for (j = 0; j < currCircleCoor.length; j++)
-  {
-    currCircleCoor[j] += objChange[j];
-  }
-  currCircle.setCoor = currCircleCoor;
+  currCircle.centerX += objChange[0];
 }
 
+//Draw the asteroids
 function drawCircle(circle)
 {
   var coor = circle.getCoor;
@@ -66,12 +69,14 @@ function drawCircle(circle)
   context.stroke();
 }
 
+//Make the 10 circle objects for each wave of asteroids
 function createCircle(height)
 {
   var listOfLeftCircleArrays = [];
   var listOfRightCircleArrays = [];
 
-  for (i = 0; i < 5; i++)
+  //Left hand circles
+  for (i = 0; i < 4; i++)
   {
     var circleCoorL = [10, Math.random() * height, 5];
     var circle = new Asteroid(circleCoorL);
@@ -79,7 +84,7 @@ function createCircle(height)
   }
 
   //Right hand circles
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < 4; i++)
   {
     var circleCoorR = [canvas.width - 10, Math.random() * height, 5];
     var circle = new Asteroid(circleCoorR);
@@ -88,35 +93,30 @@ function createCircle(height)
 
   return listOfLeftCircleArrays.concat(listOfRightCircleArrays);
 }
+
+//To check what keys have been pressed to move the rocket forward and back
 function checkKeyDown(event)
 {
   keyCode = event.which;
   keyStr = event.key;
-  rocketPos = rocket1.getCoor;
 
   if (keyStr == 'w' || keyStr == 'W')
   {
-    for (i = 0; i < 3; i++)
-    {
-      rocketPos[i][1] -= 15;
-    }
+    console.log("WW");
+    rocket1.y1 -= 15;
+    rocket1.y2 -= 15;
+    rocket1.y3 -= 15;
   }
 
   else if (keyStr == 's' || keyStr == 'S')
   {
-    for (i = 0; i < 3; i++)
-    {
-      rocketPos[i][1] += 15;
-    }
+    rocket1.y1 += 15;
+    rocket1.y2 += 15;
+    rocket1.y3 += 15;
   }
-
-  else if (keyStr == 'q' || keyStr == "Q")
-  {
-    playing = false;
-  }
-  rocket1.setCoor = rocketPos;
 }
 
+//Draw the rocket (which is in the same of a triangle)
 function drawRocket(rocket)
 {
   context.beginPath();
@@ -130,11 +130,10 @@ function drawRocket(rocket)
   context.stroke();
 }
 
+//To check if any points on all of the asteroids intersects any of the 3 lines on the rocket (triangle)
 function checkCollision(circleCoors)
 {
   //Generate list of points on circle
-  var avgX = 0;
-  var avgY = 0;
   for (i = 0; i < circleCoors.length; i++)
   {
     var currCircle = circleCoors[i];
@@ -152,6 +151,7 @@ function checkCollision(circleCoors)
   }
 }
 
+//Reuse the asteroid objects that have moved offscreen and restart them at the edges of the screen
 function fixOffScreenAsteroids(circleArrays)
 {
   for (var i = 0; i < circleArrays.length; i++)
@@ -171,13 +171,18 @@ function fixOffScreenAsteroids(circleArrays)
   }
 }
 
+//Draw the number of points that the user has
 function drawPoints()
 {
-  context.font = "50px Arial";
+  context.font = "30px Arial";
   context.fillStyle = "white";
   context.textAlign = "center";
-  context.fillText(points, canvas.width / 2, canvas.height * 0.9);
+  context.fillText("+1", canvas.width / 2, canvas.height * 0.8);
+  context.font = "50px Arial";
+  context.fillText("Points: "+ points, canvas.width / 2, canvas.height * 0.9);
 }
+
+
 function drawAll()
 {
   if (playing) {
@@ -189,13 +194,13 @@ function drawAll()
       //console.log(now.getTime());
       //console.log("fps:", (frames / msecs) * 1000);
     }
+    //Clear canvas and redraw the background black
     context.clearRect(0,0,canvas.width, canvas.height);
     context.fillStyle = "black";
     context.fillRect(0,0,canvas.width, canvas.height);
 
-    //New Asteroids
-
-    if ((counter % 50 == 0) && (counter < 601))
+    //Creating 12 new asteroid waves
+    if ((counter % 75 == 0) && (counter < 901))
     {
       var circleLR = [];
       circleLR = createCircle(canvas.height);
@@ -208,12 +213,13 @@ function drawAll()
         circleArrays.push(circleLR[i]);
       }
     }
-    //Move Asteroid that are offscreen to other side of screen
+
+    //Move asteroids that are offscreen to other side of screen
     fixOffScreenAsteroids(circleArrays);
 
     var halfArrayLength = circleArrays.length / 2;
 
-    //Left
+    //Draw and move the circles that started on the left
     for (i = 0; i < halfArrayLength; i++)
     {
       var currCircle = circleArrays[i];
@@ -221,7 +227,7 @@ function drawAll()
       moveObj(currCircle, circleChangeLeft);
       circleArrays[i] = currCircle;
     }
-    //Right
+    //Draw and move the circles that started on the right
     for (i = halfArrayLength; i < circleArrays.length; i++)
     {
       var currCircle = circleArrays[i];
@@ -232,23 +238,23 @@ function drawAll()
 
     drawRocket(rocket1);
 
-    if (rocket1.y1 > rocket1.y3 || rocket1.y1 > rocket1.y2)
-    {
-      throw("Not true");
-    }
+    //To check if the user got to the end of the canvas and won a round
 
-    if (rocket1.y1 <= 0)
+    if (rocket1.y1 <= 0 || rocket1.y2 <= 0 || rocket1.y3 <= 0)
     {
       points++;
+      console.log(points);
       playing = false;
       frames = 0;
     }
   }
 
+  //Once they win, draw the score and show for 150 frames
   else
   {
     frames += 1;
     console.log(frames);
+    console.log("drawPoints");
     drawPoints()
 
     if (frames == 150)
@@ -280,12 +286,15 @@ context = canvas.getContext("2d");
 context.fillStyle = "black";
 context.fillRect(0,0,canvas.width, canvas.height);
 
-var circleChangeLeft = [5, 0, 0];
-var circleChangeRight = [-5, 0, 0];
+//How much to move asteroids
+var circleChangeLeft = [2, 0, 0];
+var circleChangeRight = [-2, 0, 0];
 
+//Create first few circles on screen
 var circleArrays = createCircle(canvas.height);
 var currCircle = 0;
 
+//The beginning coordinates for the rocket
 var startRocketCoor = [[canvas.width / 2, canvas.height * 0.9 - 5], [canvas.width / 2 - 10, canvas.height * 0.9 + 30], [canvas.width / 2 + 10, canvas.height * 0.9 + 30]];
 var rocket1 = new Rocket(startRocketCoor);
 
