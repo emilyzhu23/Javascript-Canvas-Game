@@ -1,5 +1,5 @@
 # Javascript Canvas Project
-# Final Commit
+# Final Commit: 32b6621
 ## Emily Zhu - Honors Comp Sci P7
 ## Game: Spacerace
 ### Multiple Objects: asteroids and rocket
